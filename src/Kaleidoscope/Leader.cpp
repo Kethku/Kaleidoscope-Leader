@@ -44,8 +44,13 @@ namespace KaleidoscopePlugins {
     for (uint8_t seqIndex = 0; ; seqIndex++) {
       match = true;
 
-      if (pgm_read_word (&(dictionary[seqIndex].sequence[0].raw)) == Key_NoKey.raw)
+      uint8_t sequenceLength = pgm_read_byte (&(dictionary[seqIndex].sequenceLength));
+
+      if (sequenceLength == 0)
         break;
+
+      if (sequenceLength < sequencePos)
+        continue;
 
       Key seqKey;
       for (uint8_t i = 0; i <= sequencePos; i++) {
@@ -60,8 +65,7 @@ namespace KaleidoscopePlugins {
       if (!match)
         continue;
 
-      seqKey.raw = pgm_read_word (&(dictionary[seqIndex].sequence[sequencePos + 1].raw));
-      if (seqKey.raw == Key_NoKey.raw) {
+      if (sequenceLength == sequencePos) {
         return seqIndex;
       } else {
         return PARTIAL_MATCH;

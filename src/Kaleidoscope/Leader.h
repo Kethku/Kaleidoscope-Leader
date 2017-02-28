@@ -25,15 +25,16 @@
 
 #define LEAD(n) (Key){ .raw = KaleidoscopePlugins::Ranges::LEAD_FIRST + n }
 
-#define LEADER_SEQ(...) { __VA_ARGS__, Key_NoKey }
-#define LEADER_DICT(...) { __VA_ARGS__, {{Key_NoKey}, NULL} }
+#define LEADER_SEQ(...) (sizeof ((Key[]) {__VA_ARGS__}) / sizeof (Key)), (Key []) {__VA_ARGS__}
+#define LEADER_DICT(...) { __VA_ARGS__, {0, NULL, NULL} }
 
 namespace KaleidoscopePlugins {
   class Leader : public KaleidoscopePlugin {
   public:
     typedef void (*action_t) (uint8_t seqIndex);
     typedef struct {
-      Key sequence[LEADER_MAX_SEQUENCE_LENGTH + 1];
+      uint8_t sequenceLength;
+      Key *sequence;
       action_t action;
     } dictionary_t;
 
